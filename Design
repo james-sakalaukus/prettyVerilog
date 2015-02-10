@@ -1,0 +1,43 @@
+Read in the file line by line.
+
+Need to parse the long tertiary operators:
+  y <= (condition1) ? value : (condition2) ? value : value;
+  y <= (condition1) ? (condition2) ? value : value : value;
+  
+Move begin/end:
+  always@() begin
+  
+  end // always
+  
+  if() begin
+    ...
+  end else begin
+    ...
+  end
+  
+  
+localSignals class has:
+	type: reg/wire
+	initial value
+	vectorSize
+	
+	
+Print out file:
+	module xyz (
+  	a,
+  	b,
+  	c
+	);
+	
+	 // moduleName parameters
+	 
+	 // moduleName inputs
+	 
+	 // moduleName outputs
+	 
+	 // local signals
+	 
+	 // local registers
+	 
+	 // always...
+	 
