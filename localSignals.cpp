@@ -11,6 +11,9 @@
 localSignals::localSignals() : name("unnamedVariable"), type("wire"), vectorSize("0"), vectorInitial(0) {
 }
 
+localSignals::localSignals(std::string n, std::string t, std::string vs, int vi) : name(n), type(t), vectorSize(vs), vectorInitial(vi) {
+}
+
 localSignals::~localSignals() {
 }
 

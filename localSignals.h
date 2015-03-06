@@ -21,6 +21,7 @@ class localSignals {
 
   public:
     localSignals();
+    localSignals(std::string n, std::string t, std::string vs, int vi);
     virtual ~localSignals();
     bool print(std::fstream &);
     bool setType(std::string);
