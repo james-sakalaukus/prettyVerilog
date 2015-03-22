@@ -14,10 +14,12 @@
 class localSignals {
 
   private:
+
     std::string name;
     std::string type;
     std::string vectorSize;
     int vectorInitial;
+
 
   public:
     localSignals();
