@@ -5,47 +5,80 @@
  *      Author: james
  */
 
-#include "localSignals.h"
+//#include "localSignals.h"
+#include <localSignals.h>
+#include <parserFunctions.h>
+
 #include <string>
 
-localSignals::localSignals() : name("unnamedVariable"), type("wire"), vectorSize("0"), vectorInitial(0) {
-}
-
-localSignals::localSignals(std::string n, std::string t, std::string vs, int vi) : name(n), type(t), vectorSize(vs), vectorInitial(vi) {
+localSignals::localSignals() {
 }
 
 localSignals::~localSignals() {
+
 }
 
-bool localSignals::print(std::fstream &out){
-  if(vectorSize == "0") {
-    out << "  " << type << " " << name << ";\n";
-  } else {
-    out << "  " << type << " [" << vectorSize << ":" << vectorInitial << "] " << name << ";\n";
-  }
-  return true;
+const std::string& localSignals::getComment() const {
+  return comment;
 }
 
-
-bool localSignals::setType(std::string ls){
-  type = ls;
-  return true;
-}
-bool localSignals::setVectorSize(std::string ls){
-  vectorSize = ls;
-  return true;
-}
-bool localSignals::setVectorInitial(int li){
-  vectorInitial = li;
-  return true;
+void localSignals::setComment(const std::string& comment) {
+  this->comment = comment;
 }
 
-std::string localSignals::getType(void){
+bool localSignals::isIsVectorType() const {
+  return isVectorType;
+}
+
+void localSignals::setIsVectorType(bool isVectorType) {
+  this->isVectorType = isVectorType;
+}
+
+const std::string& localSignals::getName() const {
+  return name;
+}
+
+void localSignals::setName(const std::string& name) {
+  this->name = name;
+}
+
+bool localSignals::isIsInlineAssignment() const {
+  return isInlineAssignment;
+}
+
+void localSignals::setIsInlineAssignment(bool isInlineAssignment){
+  this->isInlineAssignment = isInlineAssignment;
+}
+
+const std::string& localSignals::getSignalAssignment() const {
+  return signalAssignment;
+}
+
+void localSignals::setSignalAssignment(const std::string& signalAssignment) {
+  this->signalAssignment = signalAssignment;
+}
+
+const std::string& localSignals::getType() const {
   return type;
 }
-std::string localSignals::getVectorSize(void){
-  return vectorSize;
+
+void localSignals::setType(const std::string& type) {
+  this->type = type;
 }
-int localSignals::getVectorInitial(void){
-  return vectorInitial;
+
+const std::string& localSignals::getVectorLsb() const {
+  return vectorLsb;
 }
+
+void localSignals::setVectorLsb(const std::string& vectorLsb) {
+  this->vectorLsb = vectorLsb;
+}
+
+const std::string& localSignals::getVectorMsb() const {
+  return vectorMsb;
+}
+
+void localSignals::setVectorMsb(const std::string& vectorMsb) {
+  this->vectorMsb = vectorMsb;
+}
+
