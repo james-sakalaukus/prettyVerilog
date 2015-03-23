@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
   vector<localSignals> localSignalsVector;
   parseLocalSignals(inputFile, localSignalsVector);
 
-  // TODO: parse all static assignments
+  // TODO: parse generate statements
 
   // TODO: parse all module instantiations
 
@@ -192,8 +192,9 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  // TODO: print generate statements
 
-  // TODO: print all module instantiations
+  // TODO: print module instantiations
 
   // TODO: print always blocks with comments around each
 
