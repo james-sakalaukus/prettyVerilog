@@ -14,6 +14,7 @@
 
 using namespace std;
 
+bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes);
 
 int main(int argc, char* argv[]) {
 
@@ -55,10 +56,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  cout << "Calling: parseLocalSignals()" << endl;
-  vector<localSignals> localSignalsVector;
-  parseLocalSignals(inputFile, localSignalsVector);
-  cout << "Returned from parseLocalSignals()" << endl;
+
 
 
   /* Parse functions:
@@ -66,84 +64,56 @@ int main(int argc, char* argv[]) {
    * 	type of Verilog construct.  Each parser should walk through the entire file and
    * 	return a vector of objects for printing later.
    */
+
   // parse all local signals/registers
+  vector<localSignals> localSignalsVector;
+  parseLocalSignals(inputFile, localSignalsVector);
 
-  // parse all static assignments
+  // TODO: parse all static assignments
 
-  // parse all parameters
+  // TODO: parse all parameters
 
-  // parse all module instantiations
+  // TODO: parse all module instantiations
 
-  // parse always blocks with comments around each
+  // TODO: parse always blocks with comments around each
 
 
-  // print module declaration and input/outputs
+  /********************************************************
+   *  print module declaration and input/outputs
+   ********************************************************/
   outputFile << "module " << moduleName << " (" << endl;
 
   outputFile << endl << "  // input signals" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-    if(it->getType() == "input") {
-      if(!it->isIsVectorType()) {
-          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
-        }
-      }
-    }
+  printSignalTypes(localSignalsVector, outputFile, "input", false);
 
   outputFile << endl << "  // input vectors" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-
-    if(it->getType() == "input") {
-      if(it->isIsVectorType()) {
-        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
-      }
-    }
-  }
+  printSignalTypes(localSignalsVector, outputFile, "input", true);
 
   outputFile << endl << "  // output signals" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-    if(it->getType() == "output") {
-      if(!it->isIsVectorType()) {
-          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
-        }
-      }
-    }
+  printSignalTypes(localSignalsVector, outputFile, "output", false);
 
   outputFile << endl << "  // output vectors" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-
-    if(it->getType() == "output") {
-      if(it->isIsVectorType()) {
-        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
-      }
-    }
-  }
+  printSignalTypes(localSignalsVector, outputFile, "output", true);
 
   outputFile << endl << "  // registered output signals" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-    if(it->getType() == "output reg") {
-      if(!it->isIsVectorType()) {
-          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
-        }
-      }
-    }
+  printSignalTypes(localSignalsVector, outputFile, "output reg", false);
 
   outputFile << endl << "  // registered output vectors" << endl;
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-
-    if(it->getType() == "output reg") {
-      if(it->isIsVectorType()) {
-        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
-      }
-    }
-  }
+  printSignalTypes(localSignalsVector, outputFile, "output reg", true);
 
   // remove the comma from the last argument
   long pos = outputFile.tellp();
   outputFile.seekp (pos-2);
   outputFile.write ("\n",1);
 
-  // print all local signals/registers
-  outputFile << ")" << endl << endl;
+  // close the module
+  outputFile << ");" << endl << endl;
+
+
+  /********************************************************
+   *  print all local signals/registers
+   ********************************************************/
+
   outputFile << "/*******************************************************************" << endl;
   outputFile << "*    Local Signal Declarations" << endl;
   outputFile << "*******************************************************************/" << endl;
@@ -196,13 +166,13 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  // print all static assignments
+  // TODO: print all static assignments
 
-  // print all parameters
+  // TODO: print all parameters
 
-  // print all module instantiations
+  // TODO: print all module instantiations
 
-  // print always blocks with comments around each
+  // TODO: print always blocks with comments around each
 
 
   outputFile << endl << "endmodule " << endl;
@@ -213,6 +183,23 @@ int main(int argc, char* argv[]) {
 }
 
 
+bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes) {
 
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+    if(it->getType() == type) {
+
+      if(!printVectorTypes && !it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
+
+        } else if(printVectorTypes && it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
+      }
+    } else {
+      // not the signal type we want to print, do nothing
+    }
+  } // for()
+
+  return true;
+}
 
 

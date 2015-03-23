@@ -33,7 +33,7 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
   regExpression << "(output|input|wire|reg)" << whiteSpace;
 
   // match if it was an "output reg" declaration
-  regExpression << "(reg)?" << whiteSpace;
+  regExpression << "(reg|wire)?" << whiteSpace;
 
   // match if vector, can be zero match
   regExpression << "(\\[" << whiteSpace << "([\\w-]*)" << whiteSpace << ":";
@@ -100,9 +100,14 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
 
       logFile << "\tI/O/reg/wire type: \"" << matches[1] << " " << matches[2] << "\"" << std::endl;
 
-      if(matches[2].matched) {
+      if(matches[2] == "reg") {
         ls->setIsRegisteredOutput(true);
         ls->setType(std::string(matches[1]+" "+matches[2]));
+
+        // remove the word 'wire' after 'output'
+      } else if(matches[2] == "wire") {
+        ls->setIsRegisteredOutput(false);
+        ls->setType(matches[1]);
       } else {
         ls->setIsRegisteredOutput(false);
         ls->setType(matches[1]);
