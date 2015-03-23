@@ -3,4 +3,5 @@
 !/Default/objects.mk
 !/Default/sources.mk
 !/Default/subdir.mk
-/.settings
+/.settings/
+/parseLocalSignalLog.txt
