@@ -129,4 +129,12 @@ module BRD_PACKET_ENGINE (
     tx_shift = 0;
   end
 
+/*******************************************************************
+*    Static Assignments
+*******************************************************************/
+
+  assign ETH_WR_CLK = CLK;
+  assign ETH_WR_STB =  wr_1_every_3_sr[2];
+  assign ETH_RD_CLK = CLK;
+
 endmodule 

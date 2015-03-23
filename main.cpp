@@ -57,21 +57,17 @@ int main(int argc, char* argv[]) {
   }
 
 
-
-
   /* Parse functions:
    * 	The parse functions take in the input file stream and parse out some particular
    * 	type of Verilog construct.  Each parser should walk through the entire file and
    * 	return a vector of objects for printing later.
    */
 
-  // parse all local signals/registers
+  // parse all local signals/registers/parameters/inputs/outputs
   vector<localSignals> localSignalsVector;
   parseLocalSignals(inputFile, localSignalsVector);
 
   // TODO: parse all static assignments
-
-  // TODO: parse all parameters
 
   // TODO: parse all module instantiations
 
@@ -79,7 +75,7 @@ int main(int argc, char* argv[]) {
 
 
   /********************************************************
-   *  print module declaration and input/outputs
+   *  print module declaration with inputs/outputs
    ********************************************************/
   outputFile << "module " << moduleName << " (" << endl;
 
@@ -109,6 +105,7 @@ int main(int argc, char* argv[]) {
   // close the module
   outputFile << ");" << endl << endl;
 
+
   /********************************************************
    *  print all parameters
    ********************************************************/
@@ -131,9 +128,11 @@ int main(int argc, char* argv[]) {
     }
   } // for()
 
+
   /********************************************************
    *  print all local signals/registers
    ********************************************************/
+
   outputFile << endl;
   outputFile << "/*******************************************************************" << endl;
   outputFile << "*    Local Signal Declarations" << endl;
@@ -142,14 +141,6 @@ int main(int argc, char* argv[]) {
   outputFile << endl << "  // scalar signals" << endl;
   printSignalTypes(localSignalsVector, outputFile, "wire", false, ";");
 
-//  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-//
-//    if(it->getType() == "wire") {
-//      if(!it->isIsVectorType()) {
-//        outputFile << it->getType() << " " << it->getName() << ";" << endl;
-//      }
-//    }
-//  }
   // print regs
   outputFile << endl << "  // scalar registers" << endl;
   printSignalTypes(localSignalsVector, outputFile, "reg", false, ";");
@@ -162,6 +153,10 @@ int main(int argc, char* argv[]) {
   outputFile << endl << "  // vector registers" << endl;
   printSignalTypes(localSignalsVector, outputFile, "reg", true, ";");
 
+
+  /********************************************************
+   *  print all initial values
+   ********************************************************/
 
   // print all reg initial values
   outputFile << endl;
@@ -178,8 +173,24 @@ int main(int argc, char* argv[]) {
     }
   }
   outputFile << "  end" << endl;
-  // TODO: print all static assignments
 
+
+  /********************************************************
+   *  print all static assignments
+   ********************************************************/
+
+  outputFile << endl;
+  outputFile << "/*******************************************************************" << endl;
+  outputFile << "*    Static Assignments" << endl;
+  outputFile << "*******************************************************************/" << endl << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+
+    if(it->getType() == "assign") {
+      if(it->isIsInlineAssignment()) {
+        outputFile << "  assign " << it->getName() << " = " << it->getSignalAssignment() << ";" << endl;
+      }
+    }
+  }
 
 
   // TODO: print all module instantiations

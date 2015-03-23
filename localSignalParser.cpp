@@ -29,7 +29,7 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
   regExpression << "^" << whiteSpace;
 
   //  match the signal type - required
-  regExpression << "(output|input|wire|reg|parameter)" << whiteSpace;
+  regExpression << "(output|input|wire|reg|parameter|assign)" << whiteSpace;
 
   // match if it was an "output reg" declaration
   regExpression << "(reg|wire)?" << whiteSpace;
