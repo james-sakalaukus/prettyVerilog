@@ -52,6 +52,21 @@ module BRD_PACKET_ENGINE (
 );
 
 /*******************************************************************
+*    Parameters
+*******************************************************************/
+
+  parameter [7:0] FIRMWARE_VERSION = 8'hff;
+  parameter [39:0] BOARD_TYPE = 40'h53_50_36_30_31;
+  parameter SERVER_MAC = 	48'h00_10_8B_F1_F5_7D;
+  parameter MY_MAC = 	48'h00_10_8B_F1_F5_7E;
+  parameter OP_CONTROL = 	8'h01;
+  parameter OP_STATUS = 	8'h02;
+  parameter OP_WRITE = 	8'h03;
+  parameter OP_READ = 	8'h04;
+  parameter OP_USER_CONTROL = 	8'h05;
+  parameter MAX_PAYLOAD = 	8'd56;
+
+/*******************************************************************
 *    Local Signal Declarations
 *******************************************************************/
 

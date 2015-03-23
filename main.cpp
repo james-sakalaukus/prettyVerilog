@@ -109,11 +109,32 @@ int main(int argc, char* argv[]) {
   // close the module
   outputFile << ");" << endl << endl;
 
+  /********************************************************
+   *  print all parameters
+   ********************************************************/
+
+  outputFile << "/*******************************************************************" << endl;
+  outputFile << "*    Parameters" << endl;
+  outputFile << "*******************************************************************/" << endl << endl;
+
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+    if(it->getType() == "parameter") {
+
+      if(!it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " " << it->getName() << " = " << it->getSignalAssignment() << ";" << endl;
+
+        } else if(it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << " = " << it->getSignalAssignment() << ";" << endl;
+      }
+    } else {
+      // not the signal type we want to print, do nothing
+    }
+  } // for()
 
   /********************************************************
    *  print all local signals/registers
    ********************************************************/
-
+  outputFile << endl;
   outputFile << "/*******************************************************************" << endl;
   outputFile << "*    Local Signal Declarations" << endl;
   outputFile << "*******************************************************************/" << endl;
@@ -159,7 +180,7 @@ int main(int argc, char* argv[]) {
   outputFile << "  end" << endl;
   // TODO: print all static assignments
 
-  // TODO: print all parameters
+
 
   // TODO: print all module instantiations
 

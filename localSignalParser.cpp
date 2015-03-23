@@ -29,7 +29,7 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
   regExpression << "^" << whiteSpace;
 
   //  match the signal type - required
-  regExpression << "(output|input|wire|reg)" << whiteSpace;
+  regExpression << "(output|input|wire|reg|parameter)" << whiteSpace;
 
   // match if it was an "output reg" declaration
   regExpression << "(reg|wire)?" << whiteSpace;
@@ -45,7 +45,8 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
   regExpression << "(=|;|,)";
 
   // Match if assignment value
-  regExpression << "([\\[\\]\\s\\w:]*)?" << whiteSpace;
+  // TODO: remove the whitespaces/tabs from the assignment value
+  regExpression << "([\\[\\]\\s\\w:']*)?" << whiteSpace;
 
   // remove the semicolon after the assignment
   regExpression << "(;)?" << whiteSpace;
