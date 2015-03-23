@@ -90,6 +90,8 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
     start = line.begin();
     end = line.end();
 
+    // stop parsing before the next module (usually a testbench)
+    // TODO: what if this is not a testbench?
     if(line.find("endmodule") != std::string::npos) {
       return true;
     }
