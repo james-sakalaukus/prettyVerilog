@@ -7,7 +7,6 @@
 
 #include <parserFunctions.h>
 
-// TODO: this does not parse "output wire" types correctly
 bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &localSignalsVector) {
 
 
@@ -90,6 +89,10 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
     std::string::const_iterator start, end;
     start = line.begin();
     end = line.end();
+
+    if(line.find("endmodule") != std::string::npos) {
+      return true;
+    }
 
     if(regex_search(start, end, matches, re, flags)) {
 

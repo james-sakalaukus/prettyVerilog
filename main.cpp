@@ -14,7 +14,7 @@
 
 using namespace std;
 
-bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes);
+bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes, string delim);
 
 int main(int argc, char* argv[]) {
 
@@ -84,22 +84,22 @@ int main(int argc, char* argv[]) {
   outputFile << "module " << moduleName << " (" << endl;
 
   outputFile << endl << "  // input signals" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "input", false);
+  printSignalTypes(localSignalsVector, outputFile, "input", false, ",");
 
   outputFile << endl << "  // input vectors" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "input", true);
+  printSignalTypes(localSignalsVector, outputFile, "input", true, ",");
 
   outputFile << endl << "  // output signals" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "output", false);
+  printSignalTypes(localSignalsVector, outputFile, "output", false, ",");
 
   outputFile << endl << "  // output vectors" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "output", true);
+  printSignalTypes(localSignalsVector, outputFile, "output", true, ",");
 
   outputFile << endl << "  // registered output signals" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "output reg", false);
+  printSignalTypes(localSignalsVector, outputFile, "output reg", false, ",");
 
   outputFile << endl << "  // registered output vectors" << endl;
-  printSignalTypes(localSignalsVector, outputFile, "output reg", true);
+  printSignalTypes(localSignalsVector, outputFile, "output reg", true, ",");
 
   // remove the comma from the last argument
   long pos = outputFile.tellp();
@@ -118,54 +118,45 @@ int main(int argc, char* argv[]) {
   outputFile << "*    Local Signal Declarations" << endl;
   outputFile << "*******************************************************************/" << endl;
   // print wires
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+  outputFile << endl << "  // scalar signals" << endl;
+  printSignalTypes(localSignalsVector, outputFile, "wire", false, ";");
 
-    if(it->getType() == "wire") {
-      if(!it->isIsVectorType()) {
-        outputFile << it->getType() << " " << it->getName() << ";" << endl;
-      }
-    }
-  }
+//  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+//
+//    if(it->getType() == "wire") {
+//      if(!it->isIsVectorType()) {
+//        outputFile << it->getType() << " " << it->getName() << ";" << endl;
+//      }
+//    }
+//  }
   // print regs
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+  outputFile << endl << "  // scalar registers" << endl;
+  printSignalTypes(localSignalsVector, outputFile, "reg", false, ";");
 
-    if(it->getType() == "reg") {
-      outputFile << it->getType() << " " << it->getName() << ";" << endl;
-    }
-  }
   // print wire vectors
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+  outputFile << endl << "  // vector signals" << endl;
+  printSignalTypes(localSignalsVector, outputFile, "wire", true, ";");
 
-    if(it->getType() == "wire") {
-      if(it->isIsVectorType()) {
-        outputFile << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << ";" << endl;
-      }
-    }
-  }
   // print reg vectors
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
-
-    if(it->getType() == "reg") {
-      if(it->isIsVectorType()) {
-        outputFile << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << ";" << endl;
-      }
-    }
-  }
+  outputFile << endl << "  // vector registers" << endl;
+  printSignalTypes(localSignalsVector, outputFile, "reg", true, ";");
 
 
   // print all reg initial values
+  outputFile << endl;
   outputFile << "/*******************************************************************" << endl;
   outputFile << "*    Initial Values" << endl;
-  outputFile << "*******************************************************************/" << endl;
+  outputFile << "*******************************************************************/" << endl << endl;
+  outputFile << "  initial begin" << endl;
   for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
 
     if(it->getType() == "reg") {
       if(it->isIsInlineAssignment()) {
-        outputFile << it->getName() << " = " << it->getSignalAssignment() << ";" << endl;
+        outputFile << "    " << it->getName() << " = " << it->getSignalAssignment() << ";" << endl;
       }
     }
   }
-
+  outputFile << "  end" << endl;
   // TODO: print all static assignments
 
   // TODO: print all parameters
@@ -183,16 +174,16 @@ int main(int argc, char* argv[]) {
 }
 
 
-bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes) {
+bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputFile, string type, bool printVectorTypes, string delim) {
 
   for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
     if(it->getType() == type) {
 
       if(!printVectorTypes && !it->isIsVectorType()) {
-          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
+          outputFile << "  " << it->getType() << " " << it->getName() << delim << endl;
 
         } else if(printVectorTypes && it->isIsVectorType()) {
-          outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
+          outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << delim << endl;
       }
     } else {
       // not the signal type we want to print, do nothing
@@ -201,5 +192,6 @@ bool printSignalTypes(vector<localSignals> &localSignalsVector, fstream &outputF
 
   return true;
 }
+
 
 
