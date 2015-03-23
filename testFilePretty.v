@@ -20,6 +20,9 @@ module BRD_PACKET_ENGINE (
   input [127:0] USER_STATUS,
 
   // output signals
+  output ETH_WR_CLK,
+  output ETH_WR_STB,
+  output ETH_RD_CLK,
 
   // output vectors
   output [9:0] OUT_ETH_STREAM,
@@ -46,7 +49,7 @@ module BRD_PACKET_ENGINE (
   output reg [15:0] ETH_RD_NUM_PIXELS,
   output reg [7:0] USER_CTRL_EN,
   output reg [15:0] USER_CTRL
-)
+);
 
 /*******************************************************************
 *    Local Signal Declarations
