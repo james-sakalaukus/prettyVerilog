@@ -1,1 +1,6 @@
-/Default
+/Default/*
+!/Default/makefile
+!/Default/objects.mk
+!/Default/sources.mk
+!/Default/subdir.mk
+/.settings

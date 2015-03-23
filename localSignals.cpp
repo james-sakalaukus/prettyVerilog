@@ -78,6 +78,14 @@ const std::string& localSignals::getVectorMsb() const {
   return vectorMsb;
 }
 
+bool localSignals::isIsRegisteredOutput() const {
+  return isRegisteredOutput;
+}
+
+void localSignals::setIsRegisteredOutput(bool isRegisteredOutput) {
+  this->isRegisteredOutput = isRegisteredOutput;
+}
+
 void localSignals::setVectorMsb(const std::string& vectorMsb) {
   this->vectorMsb = vectorMsb;
 }

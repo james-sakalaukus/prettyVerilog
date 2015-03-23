@@ -20,6 +20,9 @@ class localSignals {
     // the signal type - wire|reg|input|output
     std::string type;
 
+    // flag for a registered output type
+    bool isRegisteredOutput;
+
     // if it is a vector, the MSB and LSB can be strings
     bool isVectorType;
     std::string vectorMsb;
@@ -42,10 +45,8 @@ class localSignals {
     void setIsVectorType(bool isVectorType);
     const std::string& getName() const;
     void setName(const std::string& name);
-
     bool isIsInlineAssignment() const;
     void setIsInlineAssignment(bool isInlineAssignment);
-
     const std::string& getSignalAssignment() const;
     void setSignalAssignment(const std::string& signalAssignment);
     const std::string& getType() const;
@@ -54,6 +55,8 @@ class localSignals {
     void setVectorLsb(const std::string& vectorLsb);
     const std::string& getVectorMsb() const;
     void setVectorMsb(const std::string& vectorMsb);
+    bool isIsRegisteredOutput() const;
+    void setIsRegisteredOutput(bool isRegisteredOutput);
 };
 
 #endif /* LOCALSIGNALS_H_ */

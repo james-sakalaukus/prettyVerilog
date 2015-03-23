@@ -18,10 +18,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
   ifstream inputFile;
-  ofstream outputFile;
+  fstream outputFile;
 
   if(argc <= 1) {
-    inputFile.open("testFile.v");
+    inputFile.open("testFile.v", fstream::in);
   } else {
     inputFile.open(argv[1]);
   }
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
   string outputFileName;
   if(argc <= 2) {
-    outputFile.open("testFilePretty.v", ofstream::out);
+    outputFile.open("testFilePretty.v", fstream::out | fstream::in | fstream::trunc);
     outputFileName = "testFilePretty.v";
 
   } else {
@@ -79,20 +79,68 @@ int main(int argc, char* argv[]) {
 
   // print module declaration and input/outputs
   outputFile << "module " << moduleName << " (" << endl;
-  // print wires
-  //std::vector<localSignals>::iterator itlast = localSignalsVector.back();
-  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
 
+  outputFile << endl << "  // input signals" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
     if(it->getType() == "input") {
       if(!it->isIsVectorType()) {
-        if(*it == localSignalsVector.back()) {
-          outputFile << "  " << it->getType() << " " << it->getName() << endl;
-        } else {
           outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
         }
       }
     }
+
+  outputFile << endl << "  // input vectors" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+
+    if(it->getType() == "input") {
+      if(it->isIsVectorType()) {
+        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
+      }
+    }
   }
+
+  outputFile << endl << "  // output signals" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+    if(it->getType() == "output") {
+      if(!it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
+        }
+      }
+    }
+
+  outputFile << endl << "  // output vectors" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+
+    if(it->getType() == "output") {
+      if(it->isIsVectorType()) {
+        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
+      }
+    }
+  }
+
+  outputFile << endl << "  // registered output signals" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+    if(it->getType() == "output reg") {
+      if(!it->isIsVectorType()) {
+          outputFile << "  " << it->getType() << " " << it->getName() << "," << endl;
+        }
+      }
+    }
+
+  outputFile << endl << "  // registered output vectors" << endl;
+  for (std::vector<localSignals>::iterator it = localSignalsVector.begin() ; it != localSignalsVector.end(); ++it) {
+
+    if(it->getType() == "output reg") {
+      if(it->isIsVectorType()) {
+        outputFile << "  " << it->getType() << " [" << it->getVectorMsb() << ":" << it->getVectorLsb() << "] " << it->getName() << "," << endl;
+      }
+    }
+  }
+
+  // remove the comma from the last argument
+  long pos = outputFile.tellp();
+  outputFile.seekp (pos-2);
+  outputFile.write ("\n",1);
 
   // print all local signals/registers
   outputFile << ")" << endl << endl;

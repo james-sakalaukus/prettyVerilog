@@ -7,7 +7,7 @@
 
 #include <parserFunctions.h>
 
-// TODO: this does not parse "output reg" types correctly
+// TODO: this does not parse "output wire" types correctly
 bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &localSignalsVector) {
 
 
@@ -29,8 +29,11 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
 
   regExpression << "^" << whiteSpace;
 
-   //  match the signal type - required
+  //  match the signal type - required
   regExpression << "(output|input|wire|reg)" << whiteSpace;
+
+  // match if it was an "output reg" declaration
+  regExpression << "(reg)?" << whiteSpace;
 
   // match if vector, can be zero match
   regExpression << "(\\[" << whiteSpace << "([\\w-]*)" << whiteSpace << ":";
@@ -95,34 +98,41 @@ bool parseLocalSignals(std::ifstream &inputFile, std::vector<localSignals> &loca
 
       logFile << "Matched string: " << matches[0] << std::endl;
 
-      logFile << "\tI/O/reg/wire type: " << matches[1] << std::endl;
-      ls->setType(matches[1]);
+      logFile << "\tI/O/reg/wire type: \"" << matches[1] << " " << matches[2] << "\"" << std::endl;
 
       if(matches[2].matched) {
-        logFile << "\tVector type, " << " MSB: " << matches[3] << " LSB: " << matches[4] << std::endl;
+        ls->setIsRegisteredOutput(true);
+        ls->setType(std::string(matches[1]+" "+matches[2]));
+      } else {
+        ls->setIsRegisteredOutput(false);
+        ls->setType(matches[1]);
+      }
+
+      if(matches[3].matched) {
+        logFile << "\tVector type, " << " MSB: " << matches[4] << " LSB: " << matches[5] << std::endl;
         ls->setIsVectorType(true);
-        ls->setVectorMsb(matches[3]);
-        ls->setVectorLsb(matches[4]);
+        ls->setVectorMsb(matches[4]);
+        ls->setVectorLsb(matches[5]);
 
       } else {
         logFile << "\tNot a vector type" << std::endl;
         ls->setIsVectorType(false);
       }
 
-      logFile << "\tsignal name: " << matches[5] << std::endl;
-      ls->setName(matches[5]);
+      logFile << "\tsignal name: " << matches[6] << std::endl;
+      ls->setName(matches[6]);
 
-      if(matches[6] == ";" || matches[6] == ",") {
+      if(matches[7] == ";" || matches[7] == ",") {
         logFile << "\tNo inline assignment" << std::endl;
       } else {
-        logFile << "\tassignment value: " << matches[7] << std::endl;
+        logFile << "\tassignment value: " << matches[8] << std::endl;
         ls->setIsInlineAssignment(true);
-        ls->setSignalAssignment(matches[7]);
+        ls->setSignalAssignment(matches[8]);
       }
 
       if(matches[9].matched) {
-        logFile << "\tComment is: " << matches[9] << std::endl;
-        ls->setComment(matches[9]);
+        logFile << "\tComment is: " << matches[10] << std::endl;
+        ls->setComment(matches[10]);
       } else {
         logFile << "\tNo inline comment" << std::endl;
       }
