@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
   /********************************************************
    *  print module declaration with inputs/outputs
    ********************************************************/
+
   outputFile << "module " << moduleName << " (" << endl;
 
   outputFile << endl << "  // input signals" << endl;
